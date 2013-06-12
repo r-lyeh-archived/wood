@@ -144,6 +144,40 @@ namespace wood
         }
     };
 
+    namespace
+    {
+        template< typename T >
+        inline T as( const std::string &self ) {
+            T t;
+            if( std::istringstream(self) >> t )
+                return t;
+            bool is_true = self.size() && (self != "0") && (self != "false");
+            return (T)(is_true);
+        }
+
+        template<>
+        inline char as( const std::string &self ) {
+            return self.size() == 1 ? (char)(self[0]) : (char)(as<int>(self));
+        }
+        template<>
+        inline signed char as( const std::string &self ) {
+            return self.size() == 1 ? (signed char)(self[0]) : (signed char)(as<int>(self));
+        }
+        template<>
+        inline unsigned char as( const std::string &self ) {
+            return self.size() == 1 ? (unsigned char)(self[0]) : (unsigned char)(as<int>(self));
+        }
+
+        template<>
+        inline const char *as( const std::string &self ) {
+            return self.c_str();
+        }
+        template<>
+        inline std::string as( const std::string &self ) {
+            return self;
+        }
+    }
+
     class string : public std::string
     {
         public:
@@ -199,39 +233,15 @@ namespace wood
         // conversion
 
         template< typename T >
-        inline T as() const {
-            T t;
-            if( std::istringstream(*this) >> t )
-                return t;
-            bool is_true = this->size() && (*this != "0") && (*this != "false");
-            return (T)(is_true);
-        }
-
-        template<>
-        inline char as() const {
-            return this->size() == 1 ? (char)(this->operator[](0)) : (char)(as<int>());
-        }
-        template<>
-        inline signed char as() const {
-            return this->size() == 1 ? (signed char)(this->operator[](0)) : (signed char)(as<int>());
-        }
-        template<>
-        inline unsigned char as() const {
-            return this->size() == 1 ? (unsigned char)(this->operator[](0)) : (unsigned char)(as<int>());
-        }
-
-        template<>
-        inline const char *as() const {
-            return this->c_str();
-        }
-        template<>
-        inline std::string as() const {
-            return *this;
+        T as() const
+        {
+            return wood::as<T>(*this);
         }
 
         template< typename T >
-        operator T() const {
-            return as<T>();
+        operator T() const
+        {
+            return wood::as<T>(*this);
         }
 
         // assignment sugars

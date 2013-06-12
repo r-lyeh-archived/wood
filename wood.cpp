@@ -5,7 +5,6 @@
 #include "wood.hpp"
 
 #include "pugixml/pugixml.hpp"
-#include "pugixml/pugixml.cpp"
 
 namespace wood
 {
